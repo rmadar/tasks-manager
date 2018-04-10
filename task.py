@@ -230,14 +230,24 @@ class Project:
         self.name=name
         self.tasks=[]
 
-    def add_task(task):
+    def set_tasks(self,tasks):
+        self.tasks = tasks
+        
+    def add_task(self,task):
         self.tasks.append(task)
+
+    def add_tasks(self,tasks):
+        for t in tasks: self.tasks.append(t)
+
+    def get_tasks(self,subproject)
         
     def subprojects(self):
-        return []
+        subproj = [t.subproject for t in self.tasks]
+        return list(set(subproj))
 
     def contributors(self):
-        return []
+        contribs = [p for t in self.tasks for p in t.people]
+        return list(set(contribs))
 
     def dataframe(self):
         import pandas as pd
