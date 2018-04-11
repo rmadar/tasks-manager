@@ -1,0 +1,32 @@
+# -----------------#
+# Single task file #
+# -----------------#
+
++tsk
+
+# Overall informations
+#---------------------
+ .name: lep_kin_ljets
+ .subproject: 1/2l+jets
+ .description: Optimization of the lepton kinematics
+ .categories: optimization,orthogonality
+ .progress: 0
+ .priority: 0
+ .people: Name F1., Name2 F2.
+
+
+# Comments
+#---------
+ .comment: 2018-04-03, repeat the study in r21 - after acceptance challenge
+ .comment: 2018-05-12, r21 shows promissing results but neet to check X1 and X2
+ .comment: 2018-06-02, better to not put comma in this small comment
+
+
+# Studies
+#--------
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+
+
