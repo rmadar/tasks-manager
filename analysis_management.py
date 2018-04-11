@@ -260,6 +260,8 @@ class Project:
                 continue
 
             # Keep track of when the task is changing
+            # Goal: split a file with many tasks in many
+            # files with only one task per file.
             local_task_index=i_task
             tmp_file = open('tmp.task','w+')
             if (l=='+tsk'):
