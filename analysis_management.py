@@ -73,13 +73,20 @@ class Task:
         
         if ('infile' in kwargs):
 
+            def count_tasks():
+                ftmp=open(kwargs['infile'],'r')
+                return ftmp.read().count('+tsk')
+
             def token_info(s,t):
                 if (s[:len(t)]==t): return s[s.find(t)+len(t):].strip()
                 else: return 'dummy'
-
+                
             def is_token_line(l,t):
                 return l[0:len(t)]==t
-                
+            
+            if (count_tasks()>1):
+                raise NameError('File given to Task() class is expected to have a single \'+tsk\' occurence ({:.0f} was counted in {})'.format(count_tasks(),kwargs['infile']))
+            
             f = open(kwargs['infile'],'r')
             for l in f.readlines():
                 l = l.strip()
@@ -100,9 +107,6 @@ class Task:
                     study_data  = [s.strip() for s in token_info(l,'.study:').split(',')]
                     self.add_study( Study(*study_data)  )  
 
-                if (is_token_line(l,'.priority:')):
-                    print(token_info(l,'.priority:'),int(token_info(l,'.priority:')))
-                    print()
         else:
             
             if 'name'       in kwargs: self.name = kwargs['name']
@@ -180,12 +184,12 @@ class Task:
             s+=begin_block
             for stu in self.studies: s+= '  ' + begin_item + stu.formatted_str(synthax) + end_item
             s+=end_block
-        s+=end_block
         if (self.comments):
             s+=begin_item + 'List of comments:' + end_item
             s+=begin_block
             for cm in self.comments: s+= '  ' + begin_item + cm + end_item
             s+=end_block
+        s+=end_block
         return s
     
     def copy(self,name,description):
@@ -249,9 +253,8 @@ class Project:
 
     def load_tasks_file(self,filename):
         f = open(filename,'r')
-        i_task=0
+        i_start=[];lines=[]; i=0
         for l in f.readlines():
-
             # Clean the line and remove commented line '#'
             l = l.strip()
             try:
@@ -259,39 +262,45 @@ class Project:
             except:
                 continue
 
-            # Keep track of when the task is changing
-            # Goal: split a file with many tasks in many
-            # files with only one task per file.
-            local_task_index=i_task
-            tmp_file = open('tmp.task','w+')
-            if (l=='+tsk'):
-                if (i_task>0):
-                    tmp_file.close()
-                    self.add_task( Task(infile='tmp.task') )
-                i_task+=1
-              
-            if (local_task_index==i_task):
-                tmp_file.write(l)
-                for l2 in tmp_file: print(l2)
+            # Save lines in a list and index of starting tasks
+            lines.append(l)
+            if (l=='+tsk'): i_start.append(i)
+            i+=1; 
 
-    
+        Ntask=len(i_start)
+        for it in range(0,Ntask):
+            start=i_start[it]
+            if (it<Ntask-1): stop=i_start[it+1]-1
+            else           : stop=None
+            ftmp = open('tmp.task','w')
+            for l in lines[start:stop]:
+                ftmp.write(l+'\n')
+            ftmp.close()
+            self.add_task(Task(infile='tmp.task'))
+
+        f.close()
+
     def add_task(self,task):
         self.tasks.append(task)
 
     def add_tasks(self,tasks):
         for t in tasks: self.tasks.append(t)
 
-    def get_tasks(self,subproject):
-        return []
-        
-    def subprojects(self):
+    def get_subprojects(self):
         subproj = [t.subproject for t in self.tasks]
         return list(set(subproj))
 
-    def contributors(self):
+    def get_contributors(self):
         contribs = [p for t in self.tasks for p in t.people]
         return list(set(contribs))
 
+    def get_tasks(self):
+        return self.tasks
+    
+    def get_categories(self):
+        cat = [c for t in self.tasks for c in t.cat]
+        return list(set(cat))
+    
     def dataframe(self):
         import pandas as pd        
         return pd.DataFrame()
