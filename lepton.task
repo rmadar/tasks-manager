@@ -4,36 +4,135 @@
 # -----------------------------#
 
 +tsk
+
+# Overall informations
+#---------------------
  .name: lep_kin_ljets
  .subproject: 1/2l+jets
  .description: Optimization of the lepton kinematics
- .categories: 'optimization,orthogonality'
+ .categories: optimization,orthogonality
  .progress: 0
  .priority: 0
  .people: Name F1., Name2 F2.
- .comments:
-  - 2018-04-03, repeat the study in r21 - after acceptance challenge
-  - 2018-04-12, r21 shows promissing results but neet to check X1 and X2
-  - 2018-04-12, r21 shows promissing results but neet to check X1 and X2
-  - 2018-04-12, r21 shows promissing results but neet to check X1 and X2
-  - 2018-04-12, r21 shows promissing results but neet to check X1 and X2
- .studies:
-  - 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
-  - 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
-  - 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
-  - 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
-  - 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
-  - 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
-  - 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+
+
+# Comments
+#---------
+ .comment: 2018-04-03, repeat the study in r21 - after acceptance challenge
+ .comment: 2018-05-12, r21 shows promissing results but neet to check X1 and X2
+ .comment: 2018-06-02, better to not put comma in this small comment
+
+
+# Studies
+#--------
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+
 
 
 +tsk
- .name: lep_kin_ssel
- .subproject: ss2L/3L
+
+# Overall informations
+#---------------------
+ .name: ovr_ljets
+ .subproject: 1/2l+jets
+ .description: Check overlap removal
+ .categories: optimization,orthogonality
+ .progress: 0
+ .priority: 0
+ .people: Name F1., Name2 F2.
+
+
+# Comments
+#---------
+ .comment: 2018-04-03, Implement the proper ntuple version
+
+
++tsk
+
+# Overall informations
+#---------------------
+ .name: lep_kin_ljets
+ .subproject: 1/2l+jets
  .description: Optimization of the lepton kinematics
- .categories: 'optimization,orthogonality'
- .progress: 0.7
- .priority: 1
- .people: Name F4., Name2 F12.
- .comments:
-  - 2018-03-14, measure the Z0 for the nominal configuration
+ .categories: optimization,orthogonality
+ .progress: 0
+ .priority: 0
+ .people: Name F1., Name2 F2.
+
+
+# Comments
+#---------
+ .comment: 2018-04-03, repeat the study in r21 - after acceptance challenge
+ .comment: 2018-05-12, r21 shows promissing results but neet to check X1 and X2
+ .comment: 2018-06-02, better to not put comma in this small comment
+
+
+# Studies
+#--------
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+
+
+
++tsk
+
+# Overall informations
+#---------------------
+ .name: lep_kin_ljets
+ .subproject: 1/2l+jets
+ .description: Optimization of the lepton kinematics
+ .categories: optimization,orthogonality
+ .progress: 0
+ .priority: 0
+ .people: Name F1., Name2 F2.
+
+
+# Comments
+#---------
+ .comment: 2018-04-03, repeat the study in r21 - after acceptance challenge
+ .comment: 2018-05-12, r21 shows promissing results but neet to check X1 and X2
+ .comment: 2018-06-02, better to not put comma in this small comment
+
+
+# Studies
+#--------
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+
+
+
++tsk
+
+# Overall informations
+#---------------------
+ .name: lep_kin_ljets
+ .subproject: 1/2l+jets
+ .description: Optimization of the lepton kinematics
+ .categories: optimization,orthogonality
+ .progress: 0
+ .priority: 0
+ .people: Name F1., Name2 F2.
+
+
+# Comments
+#---------
+ .comment: 2018-04-03, repeat the study in r21 - after acceptance challenge
+ .comment: 2018-05-12, r21 shows promissing results but neet to check X1 and X2
+ .comment: 2018-06-02, better to not put comma in this small comment
+
+
+# Studies
+#--------
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+
+
