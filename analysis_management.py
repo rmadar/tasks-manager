@@ -75,7 +75,8 @@ class Task:
 
             def count_tasks():
                 ftmp=open(kwargs['infile'],'r')
-                return ftmp.read().count('+tsk')
+                line = [l.strip() for l in ftmp.readlines() if len(l.strip())>0 and l.strip()[0] is not '#']
+                return line.count('+tsk')
 
             def token_info(s,t):
                 if (s[:len(t)]==t): return s[s.find(t)+len(t):].strip()
@@ -85,7 +86,9 @@ class Task:
                 return l[0:len(t)]==t
             
             if (count_tasks()>1):
-                raise NameError('File given to Task() class is expected to have a single \'+tsk\' occurence ({:.0f} was counted in {})'.format(count_tasks(),kwargs['infile']))
+                raise NameError('File given to Task() class is expected to have a single '+\
+                                '\'+tsk\' occurence ({:.0f} was counted in {})'\
+                                .format(count_tasks(),kwargs['infile']))
             
             f = open(kwargs['infile'],'r')
             for l in f.readlines():
@@ -252,17 +255,13 @@ class Project:
         self.tasks = tasks
 
     def load_tasks_file(self,filename):
+        import os
         f = open(filename,'r')
         i_start=[];lines=[]; i=0
         for l in f.readlines():
-            # Clean the line and remove commented line '#'
             l = l.strip()
-            try:
-                if l[0]=='#': continue
-            except:
-                continue
-
-            # Save lines in a list and index of starting tasks
+            if len(l)==0: continue
+            if l[0]=='#': continue
             lines.append(l)
             if (l=='+tsk'): i_start.append(i)
             i+=1; 
@@ -277,7 +276,8 @@ class Project:
                 ftmp.write(l+'\n')
             ftmp.close()
             self.add_task(Task(infile='tmp.task'))
-
+            os.remove('tmp.task')
+            
         f.close()
 
     def add_task(self,task):

@@ -6,27 +6,25 @@
 
 # Overall informations
 #---------------------
- .name: lep_kin_ljets
- .subproject: 1/2l+jets
- .description: Optimization of the lepton kinematics
- .categories: optimization,orthogonality
- .progress: 0
- .priority: 0
- .people: Name F1., Name2 F2.
+ .name: buy_bananas
+ .subproject: food
+ .description: Go to supermarket and buy few bananas at the best possible price
+ .categories: supermarket, fruit
+ .progress: 0.3
+ .priority: 3
+ .people: John A., Kevin B., Sarah C.
 
 
 # Comments
 #---------
- .comment: 2018-04-03, repeat the study in r21 - after acceptance challenge
- .comment: 2018-05-12, r21 shows promissing results but neet to check X1 and X2
- .comment: 2018-06-02, better to not put comma in this small comment
+ .comment: 2018-03-10, comparison of a couple of supermarket -> decision to be made
+ .comment: 2018-03-15, supermarket chosen -> bananas origin TBD
+ .comment: 2018-03-16, transportation mode identified
 
 
 # Studies
 #--------
- .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf
- .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
- .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
- .study: 2018-01-23, Lennart R., https://indico.cern.ch/event/696122/contributions/2855855/attachments/1588057/2511647/2018-01-23_4top_LPC.pdf, First study with r20
+ .study: 2018-03-09, John A., https://en.wikipedia.org/wiki/Supermarket, Comparison study
+ .study: 2018-03-13, Sarah C., https://en.wikipedia.org/wiki/Banana, Full study on banana's origin
 
-#+tsk
+   # +tsk

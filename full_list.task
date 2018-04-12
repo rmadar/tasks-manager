@@ -1,0 +1,52 @@
+
+# -----------------------------#
+# Task file with the full list #
+# -----------------------------#
+
++tsk
+ .name: buy_apples
+ .subproject: food 
+ .description: Find the best possible and cheapest apples
+ .categories: fruit,price
+ .progress: 0
+ .priority: 1
+ .people: Nadia F., Sam G.
+ .comment: 2017-04-03, apples seems very hard to find -> contact Mrs Apple
+ .comment: 2017-05-07, Mr Apple doesn't answer -> go to his place
+ .comment: 2017-08-17, Location with good priced apple found 
+ .study: 2018-04-11, Sam G., https://www.statista.com/statistics/236871/retail-price-of-apples-in-the-united-states/, Apple pricing in US
+
+
++tsk
+ .name: send_invitations
+ .subproject: prep_meeting
+ .description: Send all the invitations to guests
+ .categories: guest,meeting
+ .progress: 0.7
+ .priority: 4
+ .people: Julia G.
+ .study: 2018-04-118, Julia G., https://newoldstamp.com/blog/examples-of-a-good-invitation-letter-for-an-important-business-meeting/, Example of inviation letters
+
+
++tsk
+ .name: book_room
+ .subproject: prep_meeting
+ .description: Find a nice room for the number of guests
+ .categories: location
+ .progress: 0.7
+ .priority: 4
+ .people: Ross V.
+ .comment: 2018-12-07, there is no room available so other organizme will be contacted
+
++tsk
+ .name: cake_preparation
+ .subproject: food
+ .description: Cook a nice apple and banana cake
+ .categories: cooking
+ .progress: 0.0
+ .priority: 1
+ .people: Steeve M.
+ .comment: 2018-10-07, A nice receipe was found
+ .comment: 2018-10-12, A first try wasn't really sucessful
+ .comment: 2018-10-15, This one was good -> we keep it!
+ .study: 20128-10-07, Steeve M., http://www.oishirecipes.com/2013/12/easy-apple-banana-moist-cake_26.html, Nice recipie
