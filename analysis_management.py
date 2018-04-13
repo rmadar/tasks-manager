@@ -35,9 +35,12 @@ class Study:
         elif (synthax is 'html') : return '<a href='+self.link+' target=\"_blank\">'+link_title+'</a>'
         elif (synthax is 'twiki'): return str(self)
         else: return str(self)
-        
-class Comment:
 
+##-------------------------------------------------
+## 'Comment' class to be able to add comments related
+## to a particular task, with a time stamp
+##-------------------------------------------------
+class Comment:
     def __init__(self,date,text):
         self.date=date
         self.text=text
@@ -245,7 +248,8 @@ class Task:
             for info in block:
                 if info[0:len('*comment:')]=='*comment:': self.add_comment( Comment(d,info[len('*comment:')+1:].strip()) )
                 if info[0:len('*study:')]  =='*study:'  : self.add_study( Study(d, *[l.strip() for l in info[len('*study:')+1:].split(',')]) )
-                
+                # add_people
+                # progress
                 
                 
         
