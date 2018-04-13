@@ -35,7 +35,16 @@ class Study:
         elif (synthax is 'html') : return '<a href='+self.link+' target=\"_blank\">'+link_title+'</a>'
         elif (synthax is 'twiki'): return str(self)
         else: return str(self)
+        
+class Comment:
 
+    def __init__(self,date,text):
+        self.date=date
+        self.text=text
+        
+    def __str__(self):
+        s = self.date + ': '+ self.text
+        return s
 
 
 
@@ -65,53 +74,16 @@ class Task:
         self.cat=[]
         self.prio_tasks=[]
         self.post_tasks=[]
-        self.priority=None
-        self.progress=None
+        self.priority=0.0
+        self.progress=0.0
         self.comments=[]
         self.studies=[]
+        self.state={}
 
-        
         if ('infile' in kwargs):
-
-            def count_tasks():
-                ftmp=open(kwargs['infile'],'r')
-                line = [l.strip() for l in ftmp.readlines() if len(l.strip())>0 and l.strip()[0] is not '#']
-                return line.count('+tsk')
-
-            def token_info(s,t):
-                if (s[:len(t)]==t): return s[s.find(t)+len(t):].strip()
-                else: return 'dummy'
-                
-            def is_token_line(l,t):
-                return l[0:len(t)]==t
+            self.read_from_file(kwargs['infile']);
             
-            if (count_tasks()>1):
-                raise NameError('File given to Task() class is expected to have a single '+\
-                                '\'+tsk\' occurence ({:.0f} was counted in {})'\
-                                .format(count_tasks(),kwargs['infile']))
-            
-            f = open(kwargs['infile'],'r')
-            for l in f.readlines():
-                l = l.strip()
-                try:
-                    if (l[0]=='#'): continue
-                except:
-                    continue
-
-                if (is_token_line(l,'.name:')):        self.name        = token_info(l,'.name:')
-                if (is_token_line(l,'.description:')): self.description = token_info(l,'.description:')
-                if (is_token_line(l,'.subproject:')):  self.subproject  = token_info(l,'.subproject:')
-                if (is_token_line(l,'.priority:')):    self.priority    = int(token_info(l,'.priority:'))
-                if (is_token_line(l,'.progress:')):    self.progress    = float(token_info(l,'.progress:'))
-                if (is_token_line(l,'.categories:')):  self.cat         = [s.strip() for s in token_info(l,'.categories:').split(',')]
-                if (is_token_line(l,'.people:')):      self.people      = [s.strip() for s in token_info(l,'.people:').split(',')]
-                if (is_token_line(l,'.comment:')):     self.add_comment( token_info(l,'.comment:') )  
-                if (is_token_line(l,'.study:')):
-                    study_data  = [s.strip() for s in token_info(l,'.study:').split(',')]
-                    self.add_study( Study(*study_data)  )  
-
-        else:
-            
+        else:    
             if 'name'       in kwargs: self.name = kwargs['name']
             if 'description'in kwargs: self.description = kwargs['description']
             if 'subproject' in kwargs: self.subproject = kwargs['subproject']
@@ -194,7 +166,91 @@ class Task:
             s+=end_block
         s+=end_block
         return s
+
     
+
+    def read_from_file(self,infile):
+        '''
+        Construct a Task object using a text file
+        --> this is a quite complex function split into helper functions:
+            * count_tasks()
+            * token_info(s,t)
+            * is_token_line(l,t)
+            * read_date_block()
+        '''
+        def count_tasks():
+            ftmp=open(infile,'r')
+            line = [l.strip() for l in ftmp.readlines() if len(l.strip())>0 and l.strip()[0] is not '#']
+            ftmp.close()
+            return line.count('+tsk')
+
+        def token_info(s,t):
+            if (s[:len(t)]==t): return s[s.find(t)+len(t):].strip()
+            else: return 'dummy'
+                
+        def is_token_line(l,t):
+            return l[0:len(t)]==t
+
+        def read_date_blocks():
+            ftmp=open(infile,'r')
+            lines   = [l.strip() for l in ftmp.readlines() if len(l.strip())>0 and l.strip()[0] is not '#']
+            is_date = [is_token_line(l,'.date:') for l in lines]
+            i_start = [i for i,b in enumerate(is_date) if b is True]
+            Nblock=len(i_start)
+            for it in range(0,Nblock):
+                start=i_start[it]
+                if (it<Nblock-1): stop=i_start[it+1]-1
+                else            : stop=None
+                info=lines[start:stop]
+                self.state[info[0].replace('.date:','').strip()] = info[1:]
+                
+        
+        if (count_tasks()>1):
+            raise NameError('File given to Task() class is expected to have a single '+\
+                            '\'+tsk\' occurence ({:.0f} was counted in {})'\
+                            .format(count_tasks(),infile))
+            
+        f = open(infile,'r')
+        for l in f.readlines():
+            l = l.strip()
+            try:
+                if (l[0]=='#'): continue
+            except:
+                continue
+            
+            if (is_token_line(l,'.name:')):        self.name        = token_info(l,'.name:')
+            if (is_token_line(l,'.description:')): self.description = token_info(l,'.description:')
+            if (is_token_line(l,'.subproject:')):  self.subproject  = token_info(l,'.subproject:')
+            if (is_token_line(l,'.priority:')):    self.priority    = int(token_info(l,'.priority:'))
+            if (is_token_line(l,'.progress:')):    self.progress    = float(token_info(l,'.progress:'))
+            if (is_token_line(l,'.categories:')):  self.cat         = [s.strip() for s in token_info(l,'.categories:').split(',')]
+            if (is_token_line(l,'.people:')):      self.people      = [s.strip() for s in token_info(l,'.people:').split(',')]
+            #if (is_token_line(l,'.comment:')):     self.add_comment( token_info(l,'.comment:') )  
+            #if (is_token_line(l,'.study:')):
+            #    study_data  = [s.strip() for s in token_info(l,'.study:').split(',')]
+            #    self.add_study( Study(*study_data)  )  
+
+        read_date_blocks()
+        self.update_state()
+
+    def update_state(self):
+        '''
+        Update the list of people and the progress of the task using to the last
+        state of the task
+        '''
+        dates      = sorted(self.state)
+        last_state = self.state[dates[-1]]
+        for d in dates:
+            block = self.state[d]
+            for info in block:
+                if info[0:len('*comment:')]=='*comment:': self.add_comment( Comment(d,info[len('*comment:')+1:].strip()) )
+                if info[0:len('*study:')]  =='*study:'  : self.add_study( Study(d, *[l.strip() for l in info[len('*study:')+1:].split(',')]) )
+                
+                
+                
+        
+        
+        
     def copy(self,name,description):
         return self.__copy__(self,name,description)
     

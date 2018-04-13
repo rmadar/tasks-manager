@@ -10,21 +10,31 @@
  .subproject: food
  .description: Go to supermarket and buy few bananas at the best possible price
  .categories: supermarket, fruit
- .progress: 0.3
  .priority: 3
- .people: John A., Kevin B., Sarah C.
+
+ .date: 2018-04-13
+  *progress: 0.3
+  *add_people: John A., Kevin B., Sarah C.
+
+ .date: 2018-04-15
+  *comment: comparison of a couple of supermarket -> decision to be made
+  *study: John A., https://en.wikipedia.org/wiki/Supermarket, Comparison study
+  *progress: 0.4
+  *add_people: Tony G.
+
+ .date: 2018-05-10
+  *study: Sarah C., https://en.wikipedia.org/wiki/Banana, Full study on bananas origin
+  *study: Sarah C., https://en.wikipedia.org/wiki/Banana, Full study on bananas origin
 
 
 # Comments
 #---------
- .comment: 2018-03-10, comparison of a couple of supermarket -> decision to be made
- .comment: 2018-03-15, supermarket chosen -> bananas origin TBD
- .comment: 2018-03-16, transportation mode identified
+# .comment: 2018-03-10, comparison of a couple of supermarket -> decision to be made
+# .comment: 2018-03-15, supermarket chosen -> bananas origin TBD
+# .comment: 2018-03-16, transportation mode identified
 
 
 # Studies
 #--------
- .study: 2018-03-09, John A., https://en.wikipedia.org/wiki/Supermarket, Comparison study
- .study: 2018-03-13, Sarah C., https://en.wikipedia.org/wiki/Banana, Full study on banana's origin
-
-   # +tsk
+# .study: 2018-03-09, 
+# .study: 2018-03-13, 
