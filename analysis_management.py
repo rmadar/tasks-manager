@@ -73,39 +73,43 @@ class Task:
         self.name='name'
         self.description='description'
         self.subproject=''
-        self.people=[]
         self.cat=[]
+        self.start_date=''
+        self.people=[]
         self.prio_tasks=[]
         self.post_tasks=[]
         self.priority=0.0
         self.progress=0.0
         self.comments=[]
         self.studies=[]
-        self.state={}
-
-        if ('infile' in kwargs):
-            self.read_from_file(kwargs['infile']);
-            
-        else:    
+        self.history={}
+        
+        if ('infile' not in kwargs):
             if 'name'       in kwargs: self.name = kwargs['name']
             if 'description'in kwargs: self.description = kwargs['description']
             if 'subproject' in kwargs: self.subproject = kwargs['subproject']
+            if 'start_date' in kwargs: self.start_date = kwargs['start_date']
             if 'categories' in kwargs: self.cat = kwargs['categories']
             if 'people'     in kwargs: self.people = kwargs['people']
             if 'prio_tasks' in kwargs: self.prio_tasks = kwargs['prio_tasks']
             if 'post_tasks' in kwargs: self.post_tasks = kwargs['post_tasks']
+            self.history[self.start_date]=self.get_current_snapshot()
 
-        
-    def __copy__(self,tsk,name,description):
-        return Task(name=name,description=description,subproject=tsk.subproject, \
+        else:    
+            self.read_from_file(kwargs['infile']);
+            
+    def __copy__(self,tsk):
+        return Task(name=tsk.name,description=tsk.description,start_date=tsk.start_date,\
+                    subproject=tsk.subproject,\
                     categories=tsk.cat,people=tsk.people,prio_tasks=tsk.prio_tasks,\
                     post_tasks=tsk.post_tasks)
 
     def __str__(self):
         s='\n'
-        s+='-'*(len(self.name)+4)+'\n'
-        s+='- '+self.name+' -\n'
-        s+='-'*(len(self.name)+4)+'\n'
+        title=self.name+ ' (started on '+self.start_date+')'
+        s+='-'*(len(title)+4)+'\n'
+        s+='- '+title+' -\n'
+        s+='-'*(len(title)+4)+'\n'
         s+='  Description: ' + self.description + '\n'
         str_studies = '  List of studies:\n'
         for st in self.studies: str_studies += '    - ' + str(st) + '\n'
@@ -128,17 +132,17 @@ class Task:
         begin_item=''
         end_item=''
         if (synthax is 'latex'):
-            title='\\textbf{'+self.name.replace('_','\_')+'}\n'
+            title='\\textbf{'+self.name.replace('_','\_')+'} (started on '+self.start_date+')\n'
             begin_block='\\begin{itemize}\n'
             end_block='\\end{itemize}\n'
             begin_item='\\item '
             end_item='\n'
         elif (synthax is 'md'):
-            title='**'+self.name+'**\n'
+            title='**'+self.name+'** (started on '+self.start_date+')\n' 
             begin_item=' * '
             end_item='\n'
         elif (synthax is 'html'):
-            title='<b>'+self.name+'</b>\n'
+            title='<b>'+self.name+'</b> (started on '+self.start_date+')\n'
             begin_block='<ul>\n'
             end_block='</ul>\n'
             begin_item='<li>'
@@ -169,9 +173,7 @@ class Task:
             s+=end_block
         s+=end_block
         return s
-
     
-
     def read_from_file(self,infile):
         '''
         Construct a Task object using a text file
@@ -199,14 +201,15 @@ class Task:
             lines   = [l.strip() for l in ftmp.readlines() if len(l.strip())>0 and l.strip()[0] is not '#']
             is_date = [is_token_line(l,'.date:') for l in lines]
             i_start = [i for i,b in enumerate(is_date) if b is True]
+            states={}
             Nblock=len(i_start)
             for it in range(0,Nblock):
                 start=i_start[it]
-                if (it<Nblock-1): stop=i_start[it+1]-1
+                if (it<Nblock-1): stop=i_start[it+1]
                 else            : stop=None
                 info=lines[start:stop]
-                self.state[info[0].replace('.date:','').strip()] = info[1:]
-                
+                states[info[0].replace('.date:','').strip()] = info[1:]
+            return states
         
         if (count_tasks()>1):
             raise NameError('File given to Task() class is expected to have a single '+\
@@ -222,41 +225,61 @@ class Task:
                 continue
             
             if (is_token_line(l,'.name:')):        self.name        = token_info(l,'.name:')
+            if (is_token_line(l,'.start_date')):   self.start_date  = token_info(l,'.start_date:')
             if (is_token_line(l,'.description:')): self.description = token_info(l,'.description:')
             if (is_token_line(l,'.subproject:')):  self.subproject  = token_info(l,'.subproject:')
             if (is_token_line(l,'.priority:')):    self.priority    = int(token_info(l,'.priority:'))
             if (is_token_line(l,'.progress:')):    self.progress    = float(token_info(l,'.progress:'))
             if (is_token_line(l,'.categories:')):  self.cat         = [s.strip() for s in token_info(l,'.categories:').split(',')]
             if (is_token_line(l,'.people:')):      self.people      = [s.strip() for s in token_info(l,'.people:').split(',')]
-            #if (is_token_line(l,'.comment:')):     self.add_comment( token_info(l,'.comment:') )  
-            #if (is_token_line(l,'.study:')):
-            #    study_data  = [s.strip() for s in token_info(l,'.study:').split(',')]
-            #    self.add_study( Study(*study_data)  )  
 
-        read_date_blocks()
-        self.update_state()
+        self.history[self.start_date]=self.get_current_snapshot()
+        self.load_history( read_date_blocks() )
 
-    def update_state(self):
+    def load_history(self,states):
         '''
         Update the list of people and the progress of the task using to the last
         state of the task
         '''
-        dates      = sorted(self.state)
-        last_state = self.state[dates[-1]]
+        dates=sorted(states)
         for d in dates:
-            block = self.state[d]
+            block = states[d]
             for info in block:
-                if info[0:len('*comment:')]=='*comment:': self.add_comment( Comment(d,info[len('*comment:')+1:].strip()) )
-                if info[0:len('*study:')]  =='*study:'  : self.add_study( Study(d, *[l.strip() for l in info[len('*study:')+1:].split(',')]) )
-                # add_people
-                # progress
-                
-                
+                if info[0:len('*comment:')]    =='*comment:'   : self.add_comment( Comment(d,info[len('*comment:')+1:].strip()) )
+                if info[0:len('*study:')]      =='*study:'     : self.add_study( Study(d, *[l.strip() for l in info[len('*study:')+1:].split(',')]) )
+                if info[0:len('*add_people:')] =='*add_people:': self.add_people( [n.strip() for n in info[len('*add_people:')+1:].split(',')] )
+                if info[0:len('*progress:')]   =='*progress:'  : self.set_progress( float(info[len('*progress:')+1:].strip()) )
+            self.history[d] = self.get_current_snapshot()
+
+    def print_history(self):
+        dates = sorted(self.history.keys())
+        for date in dates:
+            print('\n\n\n<<  State of the task on ' + date + '>>')
+            print(self.get_state(date))
+
+    def get_state(self,date=''):
+        if (not date): date=sorted(self.history)[-1]
+        res=self.__copy__(self)
+        res.studies  = self.history[date]['studies']
+        res.people   = self.history[date]['people']
+        res.progress = self.history[date]['progress']
+        return res
         
-        
-        
+    def get_current_snapshot(self):
+        return {
+            'people'    : list(self.people),        
+            'prio_tasks': list(self.prio_tasks),
+            'post_tasks': list(self.post_tasks),
+            'progress'  : float(self.progress),
+            'comments'  : list(self.comments),
+            'studies'   : list(self.studies),
+        }
+            
     def copy(self,name,description):
-        return self.__copy__(self,name,description)
+        res = self.__copy__(self)
+        res.name=name
+        res.description=description
+        return res
     
     def set_priority(self,p):
         self.priority=p

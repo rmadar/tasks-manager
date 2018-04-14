@@ -15,10 +15,17 @@ task1.add_study(study1)
 
 # Read task from as single-task file
 task2 = am.Task(infile='one_task.task')
-for c in task2.comments:
-    print(c)
-for s in task2.studies:
-    print(s)
+#print(task2)
+#print(task2.start_date)
+#for c in task2.comments:
+#    print(c)
+#for s in task2.studies:
+#    print(s)
+
+print('\n')
+task2.print_history()
+#print( task2.get_state() )
+
 # Project
 #my_project = am.Project('MyAwesomeProject')   # Build an awesome project
 #my_project.load_tasks_file('full_list.task')  # Load a full list of tasks

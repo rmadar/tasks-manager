@@ -8,9 +8,11 @@
 #---------------------
  .name: buy_bananas
  .subproject: food
+ .start_date: 2018-04-12
  .description: Go to supermarket and buy few bananas at the best possible price
  .categories: supermarket, fruit
  .priority: 3
+ .people:Roro, Lulu
 
  .date: 2018-04-13
   *progress: 0.3
@@ -25,7 +27,8 @@
  .date: 2018-05-10
   *study: Sarah C., https://en.wikipedia.org/wiki/Banana, Full study on bananas origin
   *study: Sarah C., https://en.wikipedia.org/wiki/Banana, Full study on bananas origin
-
+  *progress: 0.7
+  *comment: test of adding several date block
 
 # Comments
 #---------
