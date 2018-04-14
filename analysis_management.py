@@ -1,3 +1,8 @@
+import numpy  as np
+import pandas as pd
+from datetime import datetime
+
+
 ##-------------------------------------------------
 ## 'Study' class to be able to add studies related
 ## to a particular tak.
@@ -260,20 +265,21 @@ class Task:
     def get_state(self,date=''):
         if (not date): date=sorted(self.history)[-1]
         res=self.__copy__(self)
-        res.studies  = self.history[date]['studies']
         res.people   = self.history[date]['people']
         res.progress = self.history[date]['progress']
+        res.studies  = self.history[date]['studies']
+        res.comments = self.history[date]['comments']
         return res
 
     def get_modification_dates(self):
-        return sorted(self.history.keys())
+        return pd.unique( sorted(self.history.keys()) ).tolist()
 
     def get_last_update(self):
         return sorted(self.history.keys())[-1]
     
     def get_current_snapshot(self):
         return {
-            'people'    : list(self.people),        
+            'people'    : list(self.people),
             'prio_tasks': list(self.prio_tasks),
             'post_tasks': list(self.post_tasks),
             'progress'  : float(self.progress),
@@ -339,7 +345,12 @@ class Project:
     def __init__(self,name):
         self.name=name
         self.tasks=[]
-
+        
+    def __copy__(self,pjt):
+        res = Project(pjt.name)
+        res.tasks=pjt.tasks
+        return res
+        
     def set_tasks(self,tasks):
         self.tasks = tasks
 
@@ -389,7 +400,25 @@ class Project:
     def get_categories(self):
         cat = [c for t in self.tasks for c in t.cat]
         return list(set(cat))
+
+    def get_modification_dates(self):
+        return pd.unique( sorted([d for t in self.get_tasks() for d in t.get_modification_dates()]) ).tolist()
     
+    def get_state(self,date=''):
+        if (not date): date=self.get_modification_dates[-1]
+        res=self.__copy__(self)
+        thisdate=datetime.strptime(date, '%Y-%m-%d')
+        for t in self.tasks:
+            task_dates=[datetime.strptime(d, '%Y-%m-%d') for d in t.get_modification_dates()]
+            if (thisdate>task_dates[0]):
+                closest_date=thisdate-np.min([thisdate-d for d in task_dates])
+                #print(thisdate)
+                #print(t.get_modification_dates())
+                #print(closest_date.strftime('%Y-%m-%d'))
+                t.get_state(closest_date.strftime('%Y-%m-%d'))
+            else: continue
+        return res
+    
+
     def dataframe(self):
-        import pandas as pd        
         return pd.DataFrame()
