@@ -19,12 +19,10 @@ task1.add_study(study1)
 task2 = am.Task(infile='one_task.task')
 task2.print_history()
 dates=task2.get_modification_dates()
-da=[datetime.strptime(d, '%Y-%m-%d') for d in task2.get_modification_dates()]
-plt.plot(da, [task2.get_state(d).progress      for d in dates] ); 
-plt.plot(da, [len(task2.get_state(d).people)   for d in dates] ); 
-plt.plot(da, [len(task2.get_state(d).studies)  for d in dates] ); 
-plt.plot(da, [len(task2.get_state(d).comments) for d in dates] );
-plt.show()
+plt.figure(); plt.plot(dates, [task2.get_state(d).progress      for d in dates] ); 
+plt.figure(); plt.plot(dates, [len(task2.get_state(d).people)   for d in dates] ); 
+plt.figure(); plt.plot(dates, [len(task2.get_state(d).studies)  for d in dates] ); 
+plt.figure(); plt.plot(dates, [len(task2.get_state(d).comments) for d in dates] );
 
 
 # Project
@@ -53,17 +51,29 @@ for cat in my_project.get_categories():
 # Plots histogram of progresses and priorities
 progresses = [t.progress for t in my_project.get_tasks()]
 priorities = [t.priority for t in my_project.get_tasks()]
-#plt.hist(progresses); plt.show()
-#plt.hist(priorities); plt.show()
+plt.figure(); plt.hist(progresses);
+plt.figure(); plt.hist(priorities);
 
-## Plot the number of categories as function to time
+
+# Plot the number of categories as function to time
 dates=my_project.get_modification_dates()
 ncat = [len(my_project.get_state(d).get_categories()) for d in dates]
+plt.figure()
+plt.plot(dates,ncat);
 
-for d in dates:
-    print(d,my_project.get_state(d).get_categories())
 
-da=[datetime.strptime(d, '%Y-%m-%d') for d in my_project.get_modification_dates()]
-plt.plot(da,ncat);
+# Plot the number of contribution for each tasks
+plt.figure()
+for t in my_project.tasks:
+    dates=t.get_modification_dates()
+    plt.plot(dates, [len(t.get_state(d).studies) for d in dates], marker='o' ,label=t.name )
+plt.legend()
+
+
+# Plot the progression of all tasks
+plt.figure()
+for t in my_project.tasks:
+    dates=t.get_modification_dates()
+    plt.plot(dates, [t.get_state(d).progress for d in dates], marker='o' ,label=t.name )
+plt.legend()
 plt.show()
-

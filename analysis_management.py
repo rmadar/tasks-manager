@@ -23,7 +23,7 @@ class Study:
         self.title=title
         
     def __str__(self):
-        s = self.title + ' ('+ self.contributor+ ', ' + self.date + '): ' + self.link
+        s = self.title + ' ('+ self.contributor+ ', ' + str(self.date) + '): ' + self.link
         return s
         
     def formatted_str(self,synthax):
@@ -51,7 +51,7 @@ class Comment:
         self.text=text
         
     def __str__(self):
-        s = self.date + ': '+ self.text
+        s = str(self.date) + ': '+ self.text
         return s
 
 
@@ -93,7 +93,7 @@ class Task:
             if 'name'       in kwargs: self.name = kwargs['name']
             if 'description'in kwargs: self.description = kwargs['description']
             if 'subproject' in kwargs: self.subproject = kwargs['subproject']
-            if 'start_date' in kwargs: self.start_date = kwargs['start_date']
+            if 'start_date' in kwargs: self.start_date = datetime.strptime(kwargs['start_date'],'%Y-%m-%d')
             if 'categories' in kwargs: self.cat = kwargs['categories']
             if 'people'     in kwargs: self.people = kwargs['people']
             if 'prio_tasks' in kwargs: self.prio_tasks = kwargs['prio_tasks']
@@ -104,14 +104,14 @@ class Task:
             self.read_from_file(kwargs['infile']);
             
     def __copy__(self,tsk):
-        return Task(name=tsk.name,description=tsk.description,start_date=tsk.start_date,\
+        return Task(name=tsk.name,description=tsk.description,start_date=tsk.start_date.strftime('%Y-%m-%d'),\
                     subproject=tsk.subproject,\
                     categories=tsk.cat,people=tsk.people,prio_tasks=tsk.prio_tasks,\
                     post_tasks=tsk.post_tasks)
 
     def __str__(self):
         s='\n'
-        title=self.name+ ' (started on '+self.start_date+')'
+        title=self.name+ ' (started on '+self.start_date.strftime('%Y-%m-%d')+')'
         s+='-'*(len(title)+4)+'\n'
         s+='- '+title+' -\n'
         s+='-'*(len(title)+4)+'\n'
@@ -213,12 +213,12 @@ class Task:
                 if (it<Nblock-1): stop=i_start[it+1]
                 else            : stop=None
                 info=lines[start:stop]
-                date=info[0].replace('.date:','').strip()
+                date=datetime.strptime(info[0].replace('.date:','').strip(),'%Y-%m-%d')
                 data=info[1:]
-                if (datetime.strptime(date, '%Y-%m-%d')<datetime.strptime(self.start_date, '%Y-%m-%d')):
-                    raise NameError('In task '+ self.name +', the update date \''+date+\
-                                    '\' is earlier than the starting date \''+self.start_date+'\'' )
-                states[date] = data
+                if (date<self.start_date):
+                    raise NameError('In task '+ self.name +', the update date \''+str(date)+\
+                                    '\' is earlier than the starting date \''+str(self.start_date)+'\'' )
+                states[date]=data
             return states
         
         if (count_tasks()>1):
@@ -235,17 +235,17 @@ class Task:
                 continue
             
             if (is_token_line(l,'.name:')):        self.name        = token_info(l,'.name:')
-            if (is_token_line(l,'.start_date')):   self.start_date  = token_info(l,'.start_date:')
+            if (is_token_line(l,'.start_date')):   self.start_date  = datetime.strptime(token_info(l,'.start_date:'),'%Y-%m-%d')
             if (is_token_line(l,'.description:')): self.description = token_info(l,'.description:')
             if (is_token_line(l,'.subproject:')):  self.subproject  = token_info(l,'.subproject:')
             if (is_token_line(l,'.priority:')):    self.priority    = int(token_info(l,'.priority:'))
             if (is_token_line(l,'.progress:')):    self.progress    = float(token_info(l,'.progress:'))
             if (is_token_line(l,'.categories:')):  self.cat         = [s.strip() for s in token_info(l,'.categories:').split(',')]
             if (is_token_line(l,'.people:')):      self.people      = [s.strip() for s in token_info(l,'.people:').split(',')]
-
+        
         self.history[self.start_date]=self.get_current_snapshot()
         self.load_history( read_date_blocks() )
-
+                
     def load_history(self,states):
         '''
         Update the list of people and the progress of the task using to the last
@@ -264,7 +264,7 @@ class Task:
     def print_history(self):
         dates = sorted(self.history.keys())
         for date in dates:
-            print('\n\n\n<<  State of the task on ' + date + '>>')
+            print('\n\n\n<<  State of the task on ' + str(date) + '>>')
             print(self.get_state(date))
 
     def get_state(self,date=''):
@@ -279,17 +279,17 @@ class Task:
     def get_modification_dates(self):
         return pd.unique( sorted(self.history.keys()) ).tolist()
 
-    def get_last_update(self):
+    def get_last_update_date(self):
         return sorted(self.history.keys())[-1]
     
     def get_current_snapshot(self):
         return {
-            'people'    : list(self.people),
-            'prio_tasks': list(self.prio_tasks),
-            'post_tasks': list(self.post_tasks),
+            'people'    : list (self.people),
+            'prio_tasks': list (self.prio_tasks),
+            'post_tasks': list (self.post_tasks),
             'progress'  : float(self.progress),
-            'comments'  : list(self.comments),
-            'studies'   : list(self.studies),
+            'comments'  : list (self.comments),
+            'studies'   : list (self.studies),
         }
             
     def copy(self,name,description):
@@ -297,7 +297,13 @@ class Task:
         res.name=name
         res.description=description
         return res
-    
+
+    def is_completed(self,date):
+        if (date>=self.get_last_update_date()):
+            return self.get_state().progress==1.0
+        else:
+            return False
+        
     def set_priority(self,p):
         self.priority=p
         
@@ -312,7 +318,7 @@ class Task:
 
     def set_people(self,persons):
         self.people=persons
-
+        
     def add_comment(self, item):
         self.comments.append(item)
         
@@ -413,12 +419,11 @@ class Project:
         if (not date): date=self.get_modification_dates[-1]
         res=self.__copy__(self)
         res.tasks=[]
-        thisdate=datetime.strptime(date, '%Y-%m-%d')
         for t in self.tasks:
-            task_dates=[datetime.strptime(d, '%Y-%m-%d') for d in t.get_modification_dates()]
-            if (thisdate>task_dates[0]):
-                closest_date=thisdate-np.min([thisdate-d for d in task_dates])
-                res.add_task(t.get_state(closest_date.strftime('%Y-%m-%d')))
+            task_dates=t.get_modification_dates()
+            if (date>task_dates[0] and not t.is_completed(date)):
+                closest_date=date-np.min([date-d for d in task_dates])
+                res.add_task(t.get_state(closest_date))
             else: continue
         return res
     
