@@ -264,7 +264,13 @@ class Task:
         res.people   = self.history[date]['people']
         res.progress = self.history[date]['progress']
         return res
-        
+
+    def get_modification_dates(self):
+        return sorted(self.history.keys())
+
+    def get_last_update(self):
+        return sorted(self.history.keys())[-1]
+    
     def get_current_snapshot(self):
         return {
             'people'    : list(self.people),        
