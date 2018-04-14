@@ -56,7 +56,9 @@ priorities = [t.priority for t in my_project.get_tasks()]
 #plt.hist(progresses); plt.show()
 #plt.hist(priorities); plt.show()
 
+## THIS DOESNT REALLY WORK FOR NOW ##
 dates=my_project.get_modification_dates()
 ncat = [len(my_project.get_state(d).get_categories()) for d in dates]
 da=[datetime.strptime(d, '%Y-%m-%d') for d in my_project.get_modification_dates()]
 plt.plot(da,ncat); plt.show()
+####################################
