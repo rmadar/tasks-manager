@@ -1,5 +1,6 @@
 import analysis_management as am
 import matplotlib.pyplot   as plt
+import matplotlib.dates as mdates
 from   datetime import datetime
 
 # task 1
@@ -19,12 +20,11 @@ task2 = am.Task(infile='one_task.task')
 task2.print_history()
 dates=task2.get_modification_dates()
 da=[datetime.strptime(d, '%Y-%m-%d') for d in task2.get_modification_dates()]
-#plt.plot(da, [task2.get_state(d).progress      for d in dates] ); plt.show()
-#plt.plot(da, [len(task2.get_state(d).people)   for d in dates] ); plt.show()
-#plt.plot(da, [len(task2.get_state(d).studies)  for d in dates] ); plt.show()
-#plt.plot(da, [len(task2.get_state(d).comments) for d in dates] ); plt.show()
-
-
+plt.plot(da, [task2.get_state(d).progress      for d in dates] ); 
+plt.plot(da, [len(task2.get_state(d).people)   for d in dates] ); 
+plt.plot(da, [len(task2.get_state(d).studies)  for d in dates] ); 
+plt.plot(da, [len(task2.get_state(d).comments) for d in dates] );
+plt.show()
 
 
 # Project
@@ -56,9 +56,14 @@ priorities = [t.priority for t in my_project.get_tasks()]
 #plt.hist(progresses); plt.show()
 #plt.hist(priorities); plt.show()
 
-## THIS DOESNT REALLY WORK FOR NOW ##
+## Plot the number of categories as function to time
 dates=my_project.get_modification_dates()
 ncat = [len(my_project.get_state(d).get_categories()) for d in dates]
+
+for d in dates:
+    print(d,my_project.get_state(d).get_categories())
+
 da=[datetime.strptime(d, '%Y-%m-%d') for d in my_project.get_modification_dates()]
-plt.plot(da,ncat); plt.show()
-####################################
+plt.plot(da,ncat);
+plt.show()
+

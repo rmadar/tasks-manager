@@ -213,7 +213,12 @@ class Task:
                 if (it<Nblock-1): stop=i_start[it+1]
                 else            : stop=None
                 info=lines[start:stop]
-                states[info[0].replace('.date:','').strip()] = info[1:]
+                date=info[0].replace('.date:','').strip()
+                data=info[1:]
+                if (datetime.strptime(date, '%Y-%m-%d')<datetime.strptime(self.start_date, '%Y-%m-%d')):
+                    raise NameError('In task '+ self.name +', the update date \''+date+\
+                                    '\' is earlier than the starting date \''+self.start_date+'\'' )
+                states[date] = data
             return states
         
         if (count_tasks()>1):
@@ -407,15 +412,13 @@ class Project:
     def get_state(self,date=''):
         if (not date): date=self.get_modification_dates[-1]
         res=self.__copy__(self)
+        res.tasks=[]
         thisdate=datetime.strptime(date, '%Y-%m-%d')
         for t in self.tasks:
             task_dates=[datetime.strptime(d, '%Y-%m-%d') for d in t.get_modification_dates()]
             if (thisdate>task_dates[0]):
                 closest_date=thisdate-np.min([thisdate-d for d in task_dates])
-                #print(thisdate)
-                #print(t.get_modification_dates())
-                #print(closest_date.strftime('%Y-%m-%d'))
-                t.get_state(closest_date.strftime('%Y-%m-%d'))
+                res.add_task(t.get_state(closest_date.strftime('%Y-%m-%d')))
             else: continue
         return res
     

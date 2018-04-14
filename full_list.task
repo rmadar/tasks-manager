@@ -13,13 +13,13 @@
  .priority: 1
  .people: Nadia F., Sam G.
 
- .date: 2017-04-03
+ .date: 2019-04-03
   *progress: 0.1
   *comment: apples seems very hard to find -> contact Mrs Apple
   *add_people: Sam G.
   *study: Sam G., https://www.statista.com/statistics/236871/retail-price-of-apples-in-the-united-states/, Apple pricing in US
 
- .date: 2017-05-07
+ .date: 2019-05-07
   *comment: Mr Apple doesn't answer -> go to his place
   *progress: 0.3  
    
@@ -29,13 +29,13 @@
  .name: send_invitations
  .subproject: prep_meeting
  .description: Send all the invitations to guests
- .start_date: 2018-04-10
+ .start_date: 2020-04-10
  .categories: guest,meeting
  .progress: 0.7
  .priority: 4
  .people: Julia G.
  
- .date: 2018-04-11
+ .date: 2020-04-11
   *study: Julia G., https://newoldstamp.com/blog/examples-of-a-good-invitation-letter-for-an-important-business-meeting/, Example of inviation letters
 
 
@@ -43,12 +43,12 @@
  .name: book_room
  .subproject: prep_meeting
  .description: Find a nice room for the number of guests
- .start_date: 2018-10-10
+ .start_date: 2020-10-10
  .categories: location
  .progress: 0.7
  .priority: 4
  .people: Ross V.
- .date: 2018-12-07
+ .date: 2020-12-07
   *comment: there is no room available so other organizme will be contacted
 
 +tsk
