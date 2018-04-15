@@ -261,6 +261,16 @@ class Task:
                 if info[0:len('*progress:')]   =='*progress:'  : self.set_progress( float(info[len('*progress:')+1:].strip()) )
             self.history[d] = self.get_current_snapshot()
 
+    def add_date_block(self, date, **kwargs):
+        if 'comment'    in kwargs: self.add_comment(Comment(date,kwargs['comment']))
+        if 'studies'    in kwargs: self.add_studies(kwargs['studies'])
+        if 'add_people' in kwargs: self.add_people(kwargs['add_people'])
+        if 'progress'   in kwargs: self.set_progress(kwargs['progress'])
+        self.history[date] = self.get_current_snapshot()
+        ## TO BE UNDERSTOOD
+        #if (date is not self.get_last_update_date()): self = self.get_state()
+        ##
+        
     def print_history(self):
         dates = sorted(self.history.keys())
         for date in dates:
@@ -388,7 +398,6 @@ class Project:
             ftmp.close()
             self.add_task(Task(infile='tmp.task'))
             os.remove('tmp.task')
-            
         f.close()
 
     def add_task(self,task):
@@ -398,8 +407,17 @@ class Project:
         for t in tasks: self.tasks.append(t)
 
     def get_subprojects(self):
-        subproj = [t.subproject for t in self.tasks]
-        return list(set(subproj))
+        subproject={}
+        subproj_name = np.unique([t.subproject for t in self.tasks])
+        for s in subproj_name:
+            res=self.__copy__(self)
+            res.name=self.name+'_'+s
+            res.tasks=[]
+            for t in self.tasks:
+                if s==t.subproject: res.add_task(t)
+                else:               continue
+            subproject[s] = res
+        return subproject
 
     def get_contributors(self):
         contribs = [p for t in self.tasks for p in t.people]
@@ -421,12 +439,11 @@ class Project:
         res.tasks=[]
         for t in self.tasks:
             task_dates=t.get_modification_dates()
-            if (date>task_dates[0] and not t.is_completed(date)):
+            if (date>=task_dates[0] and not t.is_completed(date)):
                 closest_date=date-np.min([date-d for d in task_dates])
                 res.add_task(t.get_state(closest_date))
             else: continue
         return res
-    
-
+        
     def dataframe(self):
         return pd.DataFrame()

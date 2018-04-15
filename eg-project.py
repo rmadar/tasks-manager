@@ -8,8 +8,12 @@ task1 = am.Task(name='standalone_task',description='Test a standalone task imple
 task1.set_subproject('Testing')
 task1.add_categories(['code','on-the-fly'])
 task1.add_people(['Jason','Jaymie'])
+print(task1.people)
 task1.set_priority(1)
 task1.set_progress(0)
+task1.add_date_block(datetime.strptime('2016-12-25','%Y-%m-%d'), comment='This is xmas -> hurry hup !!!', add_people=['Santa'])
+print(task1.people)
+task1.print_history()
 
 # A study
 study1=am.Study('12-03-2017','Jason','https://en.wikipedia.org/wiki/Jason_(given_name)','Origin of my name')
@@ -33,7 +37,7 @@ my_project.add_tasks([task1,task2])           # Add some taks on the fly
 # Print some useful info
 print('\nGeneral information')
 print('===================')
-print('Subprojects: {}'.format(my_project.get_subprojects()))
+print('Subprojects: {}'.format(my_project.get_subprojects().keys()))
 print('Categogies: {}'.format(my_project.get_categories()))
 for t in my_project.get_tasks():
     print('{}: {:0.1f}'.format(t.name,t.progress))
@@ -59,7 +63,7 @@ plt.figure(); plt.hist(priorities);
 dates=my_project.get_modification_dates()
 ncat = [len(my_project.get_state(d).get_categories()) for d in dates]
 plt.figure()
-plt.plot(dates,ncat);
+plt.plot(dates,ncat,marker='o');
 
 
 # Plot the number of contribution for each tasks
@@ -76,4 +80,19 @@ for t in my_project.tasks:
     dates=t.get_modification_dates()
     plt.plot(dates, [t.get_state(d).progress for d in dates], marker='o' ,label=t.name )
 plt.legend()
-plt.show()
+
+
+# Plot number of tasks per sub-project vs time
+plt.figure()
+plt.title(my_project.name)
+sub_project = my_project.get_subprojects()
+for name,proj in sub_project.items():
+    dates=proj.get_modification_dates()
+    plt.subplot(121)
+    plt.plot(dates,[len(proj.get_state(d).get_tasks()) for d in dates], label=name, marker='o')
+    plt.legend()
+    plt.subplot(122)
+    plt.plot(dates,[len(proj.get_state(d).get_contributors()) for d in dates], label=name, marker='o')
+    plt.legend()
+
+#plt.show()
