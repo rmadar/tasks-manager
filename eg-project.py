@@ -7,11 +7,17 @@ from   datetime import datetime
 task1 = am.Task(name='standalone_task',description='Test a standalone task implemented on the fly',start_date='2016-10-10')
 task1.set_subproject('Testing')
 task1.add_categories(['code','on-the-fly'])
+######################################
 task1.add_people(['Jason','Jaymie'])
+# this line doesnt update the history
+#
+# -> Solution: create set_people() function which add it to the first step of the history
+#    as for set_progress() and an other variable which is stored in the history
+#######################################
 print(task1.people)
 task1.set_priority(1)
-task1.set_progress(0)
-task1.add_date_block(datetime.strptime('2016-12-25','%Y-%m-%d'), comment='This is xmas -> hurry hup !!!', add_people=['Santa'])
+task1.set_progress(0.2)
+task1.add_date_block(datetime.strptime('2016-12-25','%Y-%m-%d'), comment='This is xmas -> hurry hup !!!', add_people=['Santa'], progress=0.4)
 print(task1.people)
 task1.print_history()
 

@@ -267,9 +267,8 @@ class Task:
         if 'add_people' in kwargs: self.add_people(kwargs['add_people'])
         if 'progress'   in kwargs: self.set_progress(kwargs['progress'])
         self.history[date] = self.get_current_snapshot()
-        ## TO BE UNDERSTOOD
         #if (date is not self.get_last_update_date()): self = self.get_state()
-        ##
+        
         
     def print_history(self):
         dates = sorted(self.history.keys())
@@ -331,6 +330,10 @@ class Task:
         
     def add_comment(self, item):
         self.comments.append(item)
+
+    def add_comments(self, items):
+        for c in items:
+            self.comments.append(c)
         
     def add_categories(self,cats):
         for c in cats:
