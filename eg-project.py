@@ -3,22 +3,17 @@ import matplotlib.pyplot   as plt
 import matplotlib.dates as mdates
 from   datetime import datetime
 
+import warnings
+warnings.filterwarnings('ignore')
+
 # task 1
 task1 = am.Task(name='standalone_task',description='Test a standalone task implemented on the fly',start_date='2016-10-10')
 task1.set_subproject('Testing')
 task1.add_categories(['code','on-the-fly'])
-######################################
-task1.add_people(['Jason','Jaymie'])
-# this line doesnt update the history
-#
-# -> Solution: create set_people() function which add it to the first step of the history
-#    as for set_progress() and an other variable which is stored in the history
-#######################################
-print(task1.people)
+task1.set_initial_people(['Jason','Jaymie'])
 task1.set_priority(1)
 task1.set_progress(0.2)
 task1.add_date_block(datetime.strptime('2016-12-25','%Y-%m-%d'), comment='This is xmas -> hurry hup !!!', add_people=['Santa'], progress=0.4)
-print(task1.people)
 task1.print_history()
 
 # A study
@@ -92,6 +87,17 @@ plt.legend()
 plt.figure()
 plt.title(my_project.name)
 sub_project = my_project.get_subprojects()
+
+proj_temp = sub_project['Testing']
+for d in proj_temp.get_modification_dates():
+    print('\n'*2)
+    print(d)
+    print('N[tasks]={:.0f}'.format(len(proj_temp.get_state(d).get_tasks())))
+    for t in proj_temp.get_state(d).get_tasks():
+        print(t)
+
+
+
 for name,proj in sub_project.items():
     dates=proj.get_modification_dates()
     plt.subplot(121)
@@ -101,4 +107,4 @@ for name,proj in sub_project.items():
     plt.plot(dates,[len(proj.get_state(d).get_contributors()) for d in dates], label=name, marker='o')
     plt.legend()
 
-#plt.show()
+plt.show()

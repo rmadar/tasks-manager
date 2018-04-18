@@ -2,7 +2,6 @@ import numpy  as np
 import pandas as pd
 from datetime import datetime
 
-
 ##-------------------------------------------------
 ## 'Study' class to be able to add studies related
 ## to a particular tak.
@@ -40,6 +39,7 @@ class Study:
         elif (synthax is 'html') : return '<a href='+self.link+' target=\"_blank\">'+link_title+'</a>'
         elif (synthax is 'twiki'): return str(self)
         else: return str(self)
+
 
 ##-------------------------------------------------
 ## 'Comment' class to be able to add comments related
@@ -267,8 +267,7 @@ class Task:
         if 'add_people' in kwargs: self.add_people(kwargs['add_people'])
         if 'progress'   in kwargs: self.set_progress(kwargs['progress'])
         self.history[date] = self.get_current_snapshot()
-        #if (date is not self.get_last_update_date()): self = self.get_state()
-        
+        if (date is not self.get_last_update_date()): self = self.get_state()        
         
     def print_history(self):
         dates = sorted(self.history.keys())
@@ -290,12 +289,10 @@ class Task:
 
     def get_last_update_date(self):
         return sorted(self.history.keys())[-1]
-    
+
     def get_current_snapshot(self):
         return {
             'people'    : list (self.people),
-            'prio_tasks': list (self.prio_tasks),
-            'post_tasks': list (self.post_tasks),
             'progress'  : float(self.progress),
             'comments'  : list (self.comments),
             'studies'   : list (self.studies),
@@ -318,19 +315,20 @@ class Task:
         
     def set_progress(self,p):
         self.progress=p
-
+        
     def set_subproject(self,subproj):
         self.subproject = subproj
 
     def set_categories(self,cats):
         self.cat=cats
 
-    def set_people(self,persons):
+    def set_initial_people(self,persons):
         self.people=persons
-        
+        self.history[self.get_last_update_date()] = self.get_current_snapshot()
+
     def add_comment(self, item):
         self.comments.append(item)
-
+        
     def add_comments(self, items):
         for c in items:
             self.comments.append(c)
@@ -443,7 +441,8 @@ class Project:
         for t in self.tasks:
             task_dates=t.get_modification_dates()
             if (date>=task_dates[0] and not t.is_completed(date)):
-                closest_date=date-np.min([date-d for d in task_dates])
+                min_index = np.argmin([abs(date-d) for d in task_dates])
+                closest_date=task_dates[min_index]
                 res.add_task(t.get_state(closest_date))
             else: continue
         return res
