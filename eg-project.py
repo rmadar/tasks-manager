@@ -9,12 +9,13 @@ warnings.filterwarnings('ignore')
 # task 1
 task1 = am.Task(name='standalone_task',description='Test a standalone task implemented on the fly',start_date='2016-10-10')
 task1.set_subproject('Testing')
-task1.add_categories(['code','on-the-fly'])
-task1.set_initial_people(['Jason','Jaymie'])
+task1.set_categories(['code','on-the-fly'])
 task1.set_priority(1)
-task1.set_progress(0.2)
+task1.set_initial_people(['Jason','Jaymie'])
+task1.set_initial_progress(0.2)
 task1.add_date_block(datetime.strptime('2016-12-25','%Y-%m-%d'), comment='This is xmas -> hurry hup !!!', add_people=['Santa'], progress=0.4)
-task1.print_history()
+task1.add_date_block(datetime.strptime('2016-12-26','%Y-%m-%d'), comment='Xmas is gone, too late!', add_people=['Mr Coca'], progress=0.7)
+task1.add_date_block(datetime.strptime('2016-12-27','%Y-%m-%d'), comment='I eat too much, becareful', add_people=['Pere Dodu'], progress=0.8)
 
 # A study
 study1=am.Study('12-03-2017','Jason','https://en.wikipedia.org/wiki/Jason_(given_name)','Origin of my name')

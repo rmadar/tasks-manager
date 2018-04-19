@@ -258,14 +258,14 @@ class Task:
                 if info[0:len('*comment:')]    =='*comment:'   : self.add_comment( Comment(d,info[len('*comment:')+1:].strip()) )
                 if info[0:len('*study:')]      =='*study:'     : self.add_study( Study(d, *[l.strip() for l in info[len('*study:')+1:].split(',')]) )
                 if info[0:len('*add_people:')] =='*add_people:': self.add_people( [n.strip() for n in info[len('*add_people:')+1:].split(',')] )
-                if info[0:len('*progress:')]   =='*progress:'  : self.set_progress( float(info[len('*progress:')+1:].strip()) )
+                if info[0:len('*progress:')]   =='*progress:'  : self.update_progress( float(info[len('*progress:')+1:].strip()) )
             self.history[d] = self.get_current_snapshot()
 
     def add_date_block(self, date, **kwargs):
         if 'comment'    in kwargs: self.add_comment(Comment(date,kwargs['comment']))
         if 'studies'    in kwargs: self.add_studies(kwargs['studies'])
         if 'add_people' in kwargs: self.add_people(kwargs['add_people'])
-        if 'progress'   in kwargs: self.set_progress(kwargs['progress'])
+        if 'progress'   in kwargs: self.update_progress(kwargs['progress'])
         self.history[date] = self.get_current_snapshot()
         if (date is not self.get_last_update_date()): self = self.get_state()        
         
@@ -313,18 +313,22 @@ class Task:
     def set_priority(self,p):
         self.priority=p
         
-    def set_progress(self,p):
-        self.progress=p
-        
     def set_subproject(self,subproj):
         self.subproject = subproj
 
     def set_categories(self,cats):
         self.cat=cats
 
+    def update_progress(self,p):
+        self.progress=p
+        
     def set_initial_people(self,persons):
         self.people=persons
-        self.history[self.get_last_update_date()] = self.get_current_snapshot()
+        self.history[self.start_date] = self.get_current_snapshot()
+
+    def set_initial_progress(self,p):
+        self.progress=p
+        self.history[self.start_date] = self.get_current_snapshot()
 
     def add_comment(self, item):
         self.comments.append(item)
