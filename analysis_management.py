@@ -1,6 +1,15 @@
+# Date management
+from datetime import datetime
+
+# Data management
 import numpy  as np
 import pandas as pd
-from datetime import datetime
+
+# Plotting
+import matplotlib.pyplot   as     plt
+import matplotlib.dates    as     mdates
+from   matplotlib.ticker   import MaxNLocator
+
 
 ##-------------------------------------------------
 ## 'Study' class to be able to add studies related
@@ -286,9 +295,10 @@ class Task:
     def add_posterior_tasks(self,tasks_after):
         for tsk in tasks_after:
             self.post_tasks.append(tsk)
-
-    def add_study(self,study):
-        self.add_date_block(study.date,studies=[study])
+            
+    def add_studies(self,studies):
+        for s in studies:
+            self.add_date_block(s.date,studies=[s])
 
     def load_history(self,states):
         '''
@@ -357,6 +367,50 @@ class Task:
         for s in studies:
             self.studies.append(s)
             if (s.contributor not in self.people): self.update_people([s.contributor])
+
+    def plot_evolution(self):
+
+        dates=self.get_modification_dates()
+        def format_ax(ax):
+            # Here apply some different rules depending on
+            # date[-1]-date[0] (length of the task)
+            ax.xaxis.set_minor_locator(mdates.DayLocator())
+            ax.xaxis.set_major_locator(mdates.WeekdayLocator())
+            ax.xaxis.set_major_formatter(mdates.DateFormatter('%D'))
+
+        fig=plt.figure(figsize=(13,7))
+        fig.suptitle('Time Evolution of \'{}\' (sub-project \'{}\', priority {:.0f})'
+                     .format(self.name,self.subproject,self.priority), fontsize=15)
+        
+        ax=plt.subplot(221)
+        ax.plot(dates, [self.get_state(d).progress for d in dates], 'o-');
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Progress')
+        format_ax(ax)
+        
+        ax=plt.subplot(222)
+        ax.plot(dates, [len(self.get_state(d).people) for d in dates], 'o-');
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Number of contributors')
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        format_ax(ax)
+        
+        ax=plt.subplot(223)
+        ax.plot(dates, [len(self.get_state(d).studies) for d in dates], 'o-'); 
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Number of studies')
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        format_ax(ax)
+        
+        ax=plt.subplot(224)
+        ax.plot(dates, [len(self.get_state(d).comments) for d in dates],'o-');
+        ax.set_xlabel('Date')
+        ax.set_ylabel('Number of comments')
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        format_ax(ax)
+
+        return fig
+        
 
 
 ##-----------------------------------------------
@@ -448,5 +502,14 @@ class Project:
             else: continue
         return res
         
+    def plot_status(self):
+        # Plot here a stack histogram over sub-project of priority and advancement
+        # Number of tasks vs time (per sub project and total)
+        return
+
+    def tasks_per_contributor(self):
+        # Return a dictionnary of people:[list_of_tasks]
+        return {}
+
     def dataframe(self):
         return pd.DataFrame()
