@@ -246,6 +246,50 @@ class Task:
         self.history[self.start_date]=self.get_current_snapshot()
         self.load_history( read_date_blocks() )
                 
+    def copy(self,name,description):
+        res = self.__copy__(self)
+        res.name=name
+        res.description=description
+        return res
+
+    def is_completed(self,date):
+        if (date>=self.get_last_update_date()):
+            return self.get_state().progress==1.0
+        else:
+            return False
+        
+    def set_priority(self,p):
+        self.priority=p
+        
+    def set_subproject(self,subproj):
+        self.subproject = subproj
+
+    def set_categories(self,cats):
+        self.cat=cats
+        
+    def add_categories(self,cats):
+        for c in cats:
+            self.cat.append(c)
+        
+    def set_initial_people(self,persons):
+        self.people=persons
+        self.history[self.start_date] = self.get_current_snapshot()
+
+    def set_initial_progress(self,p):
+        self.progress=p
+        self.history[self.start_date] = self.get_current_snapshot()
+            
+    def add_prior_tasks(self,tasks_before):
+        for tsk in tasks_before:
+            self.prio_tasks.append(tsk)
+
+    def add_posterior_tasks(self,tasks_after):
+        for tsk in tasks_after:
+            self.post_tasks.append(tsk)
+
+    def add_study(self,study):
+        self.add_date_block(study.date,studies=[study])
+
     def load_history(self,states):
         '''
         Update the list of people and the progress of the task using to the last
@@ -255,16 +299,16 @@ class Task:
         for d in dates:
             block = states[d]
             for info in block:
-                if info[0:len('*comment:')]    =='*comment:'   : self.add_comment( Comment(d,info[len('*comment:')+1:].strip()) )
-                if info[0:len('*study:')]      =='*study:'     : self.add_study( Study(d, *[l.strip() for l in info[len('*study:')+1:].split(',')]) )
-                if info[0:len('*add_people:')] =='*add_people:': self.add_people( [n.strip() for n in info[len('*add_people:')+1:].split(',')] )
+                if info[0:len('*comment:')]    =='*comment:'   : self.update_comments( [Comment(d,info[len('*comment:')+1:].strip())] )
+                if info[0:len('*study:')]      =='*study:'     : self.update_studies ( [Study(d, *[l.strip() for l in info[len('*study:')+1:].split(',')])] )
+                if info[0:len('*add_people:')] =='*add_people:': self.update_people  ( [n.strip() for n in info[len('*add_people:')+1:].split(',')] )
                 if info[0:len('*progress:')]   =='*progress:'  : self.update_progress( float(info[len('*progress:')+1:].strip()) )
             self.history[d] = self.get_current_snapshot()
 
     def add_date_block(self, date, **kwargs):
-        if 'comment'    in kwargs: self.add_comment(Comment(date,kwargs['comment']))
-        if 'studies'    in kwargs: self.add_studies(kwargs['studies'])
-        if 'add_people' in kwargs: self.add_people(kwargs['add_people'])
+        if 'comment'    in kwargs: self.update_comments([Comment(date,kwargs['comment'])])
+        if 'studies'    in kwargs: self.update_studies(kwargs['studies'])
+        if 'add_people' in kwargs: self.update_people(kwargs['add_people'])
         if 'progress'   in kwargs: self.update_progress(kwargs['progress'])
         self.history[date] = self.get_current_snapshot()
         if (date is not self.get_last_update_date()): self = self.get_state()        
@@ -298,68 +342,21 @@ class Task:
             'studies'   : list (self.studies),
         }
             
-    def copy(self,name,description):
-        res = self.__copy__(self)
-        res.name=name
-        res.description=description
-        return res
-
-    def is_completed(self,date):
-        if (date>=self.get_last_update_date()):
-            return self.get_state().progress==1.0
-        else:
-            return False
-        
-    def set_priority(self,p):
-        self.priority=p
-        
-    def set_subproject(self,subproj):
-        self.subproject = subproj
-
-    def set_categories(self,cats):
-        self.cat=cats
-
-    def update_progress(self,p):
-        self.progress=p
-        
-    def set_initial_people(self,persons):
-        self.people=persons
-        self.history[self.start_date] = self.get_current_snapshot()
-
-    def set_initial_progress(self,p):
-        self.progress=p
-        self.history[self.start_date] = self.get_current_snapshot()
-
-    def add_comment(self, item):
-        self.comments.append(item)
-        
-    def add_comments(self, items):
+    def update_comments(self, items):
         for c in items:
             self.comments.append(c)
         
-    def add_categories(self,cats):
-        for c in cats:
-            self.cat.append(c)
-            
-    def add_people(self,people_name):
+    def update_progress(self,p):
+        self.progress=p
+
+    def update_people(self,people_name):
         for person in people_name:
             self.people.append(person)
 
-    def add_prior_tasks(self,tasks_before):
-        for tsk in tasks_before:
-            self.prio_tasks.append(tsk)
-
-    def add_posterior_tasks(self,tasks_after):
-        for tsk in tasks_after:
-            self.post_tasks.append(tsk)
-
-    def add_studies(self,studies):
+    def update_studies(self,studies):
         for s in studies:
-            self.add_study(s)
-
-    def add_study(self,s):
-        self.studies.append(s)
-
+            self.studies.append(s)
+            if (s.contributor not in self.people): self.update_people([s.contributor])
 
 
 ##-----------------------------------------------

@@ -17,8 +17,10 @@ task1.add_date_block(datetime.strptime('2016-12-25','%Y-%m-%d'), comment='This i
 task1.add_date_block(datetime.strptime('2016-12-26','%Y-%m-%d'), comment='Xmas is gone, too late!', add_people=['Mr Coca'], progress=0.7)
 task1.add_date_block(datetime.strptime('2016-12-27','%Y-%m-%d'), comment='I eat too much, becareful', add_people=['Pere Dodu'], progress=0.8)
 
+#task1.set_progress(1)
+
 # A study
-study1=am.Study('12-03-2017','Jason','https://en.wikipedia.org/wiki/Jason_(given_name)','Origin of my name')
+study1=am.Study(datetime.strptime('2017-03-12','%Y-%m-%d'),'Katy','https://en.wikipedia.org/wiki/Jason_(given_name)','Origin of my name')
 task1.add_study(study1)
 
 # Read task from as single-task file
