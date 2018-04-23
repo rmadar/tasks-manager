@@ -446,7 +446,7 @@ class Project:
         Ntask=len(i_start)
         for it in range(0,Ntask):
             start=i_start[it]
-            if (it<Ntask-1): stop=i_start[it+1]-1
+            if (it<Ntask-1): stop=i_start[it+1]
             else           : stop=None
             ftmp = open('tmp.task','w')
             for l in lines[start:stop]:
