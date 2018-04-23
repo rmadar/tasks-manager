@@ -481,6 +481,13 @@ class Project:
 
     def get_tasks(self):
         return self.tasks
+
+    def get_task(self,name):
+        res=None
+        for t in self.tasks:
+            if (t.name==name): res=t
+        if res: return res
+        else:   raise NameError('Taks {} is not in the project {}'.format(name,self.name))
     
     def get_categories(self):
         cat = [c for t in self.tasks for c in t.cat]
