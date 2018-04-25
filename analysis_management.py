@@ -262,7 +262,7 @@ class Task:
         return res
 
     def is_completed(self,date):
-        if (date>=self.get_last_update_date()):
+        if (date>self.get_last_update_date()):
             return self.get_state().progress==1.0
         else:
             return False
