@@ -544,11 +544,6 @@ class Project:
                 continue
         return res
         
-    def plot_status(self):
-        # Plot here a stack histogram over sub-project of priority and advancement
-        # Number of tasks vs time (per sub project and total)
-        # Plot number of contributor per sub-project versus time (as bar-like plots)
-        return
 
     def tasks_per_contributor(self):
         # Return a dictionnary of people:[list_of_tasks]
@@ -556,3 +551,87 @@ class Project:
 
     def dataframe(self):
         return pd.DataFrame()
+
+    def plot_status(self):
+        # Plot here a stack histogram over sub-project of priority and advancement
+        # Number of tasks vs time (per sub project and total)
+        # Plot number of contributor per sub-project versus time (as bar-like plots)
+
+        ###########################
+        ## Very preliminary for now
+        ###########################
+
+        
+        # Plots histogram of progresses and priorities
+        progresses = [t.progress for t in self.get_tasks()]
+        priorities = [t.priority for t in self.get_tasks()]
+        plt.figure();
+        plt.hist(progresses);
+        plt.ylabel('Number of tasks')
+        plt.xlabel('Progress')
+        plt.figure();
+        plt.hist(priorities);
+        plt.ylabel('Number of tasks')
+        plt.xlabel('Priority')
+        
+        # Plot the number of categories as function to time
+        dates=self.get_modification_dates()
+        ncat = [len(self.get_state(d).get_categories()) for d in dates]
+        plt.figure()
+        plt.ylabel('Number of categories')
+        plt.plot(dates,ncat,marker='o');
+        
+        
+        # Plot the number of contribution for each tasks
+        plt.figure()
+        dates=self.get_modification_dates()
+        for t in self.tasks:
+            dateOK = [d for d in dates if t.is_valid_date(d)]
+            plt.plot(dateOK, [len(t.get_state(d).studies) for d in dateOK],marker='o',linestyle='-',label=t.name )
+            plt.ylabel('Number of studies')
+            plt.legend()
+            
+            
+        # Plot the progression of all tasks
+        plt.figure()
+        dates=self.get_modification_dates()
+        for t in self.tasks:
+            dateOK = [d for d in dates if t.is_valid_date(d)]
+            plt.plot(dateOK, [t.get_state(d).progress for d in dateOK],marker='o',linestyle='-' ,label=t.name )
+            plt.ylabel('Progress')
+            plt.legend()
+                
+        # Plot the number of comments of all tasks
+        plt.figure()
+        dates=self.get_modification_dates()
+        for t in self.tasks:
+            dateOK = [d for d in dates if t.is_valid_date(d)]
+            plt.plot(dateOK, [len(t.get_state(d).comments) for d in dateOK], marker='o',linestyle='-' ,label=t.name )
+            plt.ylabel('Number of comments (active tasks)')
+            plt.legend()
+
+
+        # Plot number of tasks per sub-project vs time
+        plt.figure()
+        plt.title(self.name)
+        sub_project = self.get_subprojects()
+        dates=self.get_modification_dates()
+        for name,proj in sub_project.items():
+            plt.subplot(121)
+            plt.plot(dates,[len(proj.get_state(d).get_tasks()) for d in dates], label=name, marker='o')
+            plt.ylabel('Number of active tasks')
+            plt.legend()
+            plt.subplot(122)
+            plt.plot(dates,[len(proj.get_state(d).get_contributors()) for d in dates], label=name, marker='o')
+            plt.ylabel('Number of contributors (active tasks)')
+            plt.legend()
+
+        # Plot number of tasks for the whole project
+        plt.figure()
+        dates=self.get_modification_dates()
+        plt.plot(dates,[len(self.get_state(d).get_tasks()) for d in dates], label=self.name, marker='o')
+        plt.ylabel('Number of active tasks')
+        plt.legend()
+        
+        plt.show()
+        return
