@@ -113,10 +113,16 @@ class Task:
             self.read_from_file(kwargs['infile']);
             
     def __copy__(self,tsk):
-        return Task(name=tsk.name,description=tsk.description,start_date=tsk.start_date.strftime('%Y-%m-%d'),\
+        res = Task(name=tsk.name,description=tsk.description,start_date=tsk.start_date.strftime('%Y-%m-%d'),\
                     subproject=tsk.subproject,\
                     categories=tsk.cat,people=tsk.people,prio_tasks=tsk.prio_tasks,\
                     post_tasks=tsk.post_tasks)
+        res.priority=float(self.priority)
+        res.progress=float(self.progress)
+        res.comments=list(self.comments)
+        res.studies =list(self.studies)
+        res.history =dict(self.history)                                        
+        return res
 
     def __str__(self):
         s='\n'
@@ -266,6 +272,12 @@ class Task:
             return self.get_state().progress==1.0
         else:
             return False
+
+    def is_valid_date(self,date):
+        if (date>=self.start_date and not self.is_completed(date)):
+            return True
+        else:
+            False
         
     def set_priority(self,p):
         self.priority=p
@@ -331,18 +343,32 @@ class Task:
 
     def get_state(self,date=''):
         if (not date): date=sorted(self.history)[-1]
-        res=self.__copy__(self)
-        res.people   = self.history[date]['people']
-        res.progress = self.history[date]['progress']
-        res.studies  = self.history[date]['studies']
-        res.comments = self.history[date]['comments']
-        return res
+        if date in self.get_modification_dates():
+            res=self.__copy__(self)
+            res.people   = self.history[date]['people']
+            res.progress = self.history[date]['progress']
+            res.studies  = self.history[date]['studies']
+            res.comments = self.history[date]['comments']
+            return res
+        else:
+            return self.interpolate_history(date)
 
     def get_modification_dates(self):
         return pd.unique( sorted(self.history.keys()) ).tolist()
 
     def get_last_update_date(self):
         return sorted(self.history.keys())[-1]
+
+    def get_history_snapshot(self,date):
+        if date not in self.history.keys():
+            raise NameError('The date {} is not present in the history of the taks {}'.format(date, self.name))
+        else:
+            return {
+                'people'    : list (self.history[date]['people']),
+                'progress'  : float(self.history[date]['progress']),
+                'comments'  : list (self.history[date]['comments']),
+                'studies'   : list (self.history[date]['studies']),
+            }
 
     def get_current_snapshot(self):
         return {
@@ -351,7 +377,18 @@ class Task:
             'comments'  : list (self.comments),
             'studies'   : list (self.studies),
         }
-            
+
+    def interpolate_history(self,date):
+        task_dates=self.get_modification_dates()
+        if self.is_valid_date(date):
+            min_index = np.argmin([abs(date-d) for d in task_dates])
+            closest_date=task_dates[min_index]
+            res = self.__copy__(self)
+            res.history[date] = self.get_history_snapshot(closest_date)
+            return res.get_state(date)
+        else:
+            raise NameError('Task {} -> the date {} is not valid (before the starting date {} or after completion date - if relevant)'.format(self.name,date,self.start_date))
+        
     def update_comments(self, items):
         for c in items:
             self.comments.append(c)
@@ -501,17 +538,16 @@ class Project:
         res=self.__copy__(self)
         res.tasks=[]
         for t in self.tasks:
-            task_dates=t.get_modification_dates()
-            if (date>=task_dates[0] and not t.is_completed(date)):
-                min_index = np.argmin([abs(date-d) for d in task_dates])
-                closest_date=task_dates[min_index]
-                res.add_task(t.get_state(closest_date))
-            else: continue
+            if (t.is_valid_date(date)):
+                res.add_task(t.get_state(date))
+            else:
+                continue
         return res
         
     def plot_status(self):
         # Plot here a stack histogram over sub-project of priority and advancement
         # Number of tasks vs time (per sub project and total)
+        # Plot number of contributor per sub-project versus time (as bar-like plots)
         return
 
     def tasks_per_contributor(self):
