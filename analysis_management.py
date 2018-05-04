@@ -323,7 +323,9 @@ class Task:
             for info in block:
                 if info[0:len('*comment:')]    =='*comment:'   : self.update_comments( [Comment(d,info[len('*comment:')+1:].strip())] )
                 if info[0:len('*study:')]      =='*study:'     : self.update_studies ( [Study(d, *[l.strip() for l in info[len('*study:')+1:].split(',')])] )
-                if info[0:len('*add_people:')] =='*add_people:': self.update_people  ( [n.strip() for n in info[len('*add_people:')+1:].split(',')] )
+
+                if info[0:len('*add_people:')] =='*add_people:': self.update_people  ( [n.strip() for n in info[len('*add_people:')+1:].split(',')],'add' )
+                if info[0:len('*sup_people:')] =='*sup_people:': self.update_people  ( [n.strip() for n in info[len('*sup_people:')+1:].split(',')],'sup' )
                 if info[0:len('*progress:')]   =='*progress:'  : self.update_progress( float(info[len('*progress:')+1:].strip()) )
             self.history[d] = self.get_current_snapshot()
 
@@ -396,14 +398,17 @@ class Task:
     def update_progress(self,p):
         self.progress=p
 
-    def update_people(self,people_name):
+    def update_people(self,people_name,mode):
+        if mode!='add' and mode!='sup':
+            raise NameError('update_people() function takes two modes: \'add\' and \'sup\'. Mode ' + mode + ' is not supported.')
         for person in people_name:
-            self.people.append(person)
+            if mode=='add': self.people.append(person)
+            if mode=='sup': self.people.remove(person) 
 
     def update_studies(self,studies):
         for s in studies:
             self.studies.append(s)
-            if (s.contributor not in self.people): self.update_people([s.contributor])
+            if (s.contributor not in self.people): self.update_people([s.contributor],'add')
 
     def plot_evolution(self):
 
